@@ -23,10 +23,50 @@ public class BankTrasactionAnalyzerSimple {
 	}
 	
 	public static void collectSummary(final BankStatementProcessor bankStatementProcessor) {
-		System.out.println("The total for all transactions is " + bankStatementProcessor.calculateTotalAmount());
-		System.out.println("The total for transactions in January is " + bankStatementProcessor.calculateTotalInMonth(Month.JANUARY));
-		System.out.println("The total for transactions in February is " + bankStatementProcessor.calculateTotalInMonth(Month.FEBRUARY));
-		System.out.println("The total salary received is " + bankStatementProcessor.calculateTotalForCategory("Salary"));
+		final BankTransactionSummarize calculateTotalAmount = new BankTransactionSummarize() {
+			public double summarize(double accumulator, BankTransaction bankTransaction) {
+				return accumulator + bankTransaction.getAmount();
+			}
+		};
+		
+		final BankTransactionSummarize calculateTotalInMonthJanuary = new BankTransactionSummarize() {
+			public double summarize(double accumulator, BankTransaction bankTransaction) {
+				if(bankTransaction.getDate().getMonth() == Month.JANUARY) {
+					return accumulator + bankTransaction.getAmount();
+				}
+				return accumulator;
+			}
+		};
+		
+		final BankTransactionSummarize calculateTotalInMonthFebruary = new BankTransactionSummarize() {
+			public double summarize(double accumulator, BankTransaction bankTransaction) {
+				if(bankTransaction.getDate().getMonth() == Month.FEBRUARY) {
+					return accumulator + bankTransaction.getAmount();
+				}
+				return accumulator;
+			}
+		};
+		
+		final BankTransactionSummarize calculateTotalForCategory = new BankTransactionSummarize() {
+			public double summarize(double accumulator, BankTransaction bankTransaction) {
+				if(bankTransaction.getDescription().equalsIgnoreCase("Salary")) {
+					return accumulator + bankTransaction.getAmount();
+				}
+				return accumulator;
+			}
+		};
+		
+		final List<BankTransaction> transactionInFrebruaryAndExpensive = bankStatementProcessor.findTransactions(new BankTransactionFilter() {
+			public boolean test(BankTransaction bankTransaction) {
+				return bankTransaction.getDate().getMonth() == Month.FEBRUARY && bankTransaction.getAmount() >= 1000;
+			}
+		});
+		
+		System.out.println("The total for all transactions is " + bankStatementProcessor.summarizeTransaction(calculateTotalAmount));
+		System.out.println("The total for transactions in January is " + bankStatementProcessor.summarizeTransaction(calculateTotalInMonthJanuary));
+		System.out.println("The total for transactions in February is " + bankStatementProcessor.summarizeTransaction(calculateTotalInMonthFebruary));
+		System.out.println("The total salary received is " + bankStatementProcessor.summarizeTransaction(calculateTotalForCategory));
+		System.out.println("The transactions more expensive in February are " + transactionInFrebruaryAndExpensive);
 	}
 	
 	

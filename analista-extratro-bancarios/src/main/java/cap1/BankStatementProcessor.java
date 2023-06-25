@@ -1,6 +1,6 @@
 package cap1;
 
-import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BankStatementProcessor {
@@ -11,31 +11,25 @@ public class BankStatementProcessor {
 		this.bankTransactions = bankTransactions;
 	}
 
-	public double calculateTotalAmount() {
-		double total = 0d;
-		for(BankTransaction bankTransaction : bankTransactions) {
-			total += bankTransaction.getAmount();
+	public double summarizeTransaction(final BankTransactionSummarize bankTransactionSummarize) {
+		double result = 0;
+		for(final BankTransaction bankTransaction : bankTransactions) {
+			result = bankTransactionSummarize.summarize(result, bankTransaction); 
 		}
-		return total;
+		return result;
 	}
 	
-	public double calculateTotalInMonth(final Month month) {
-		double total = 0d;
+	public List<BankTransaction> findTransactions(final BankTransactionFilter bankTransactionFilter) {
+		final List<BankTransaction> transactions = new ArrayList<BankTransaction>();
 		for(final BankTransaction bankTransaction : bankTransactions) {
-			if(bankTransaction.getDate().getMonth() == month) {
-				total += bankTransaction.getAmount();
+			if(bankTransactionFilter.test(bankTransaction)) {
+				transactions.add(bankTransaction);
 			}
 		}
-		return total;
+		return transactions;
 	}
-	
-	public double calculateTotalForCategory(final String category) {
-		double total = 0d;
-		for(final BankTransaction bankTransaction : bankTransactions) {
-			if(bankTransaction.getDescription().equalsIgnoreCase(category)) {
-				total += bankTransaction.getAmount();
-			}
-		}
-		return total;
+
+	public List<BankTransaction> findTransactionsGreaterThanEqual(final int amount) {
+		return findTransactions(bankTransactionFilter -> bankTransactionFilter.getAmount() >= amount);
 	}
 }
