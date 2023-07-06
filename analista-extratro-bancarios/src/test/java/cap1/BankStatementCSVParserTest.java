@@ -8,6 +8,9 @@ import java.time.Month;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import cap1.model.BankTransaction;
+import cap1.service.BankStatementCSVParser;
+
 class BankStatementCSVParserTest {
 	
 	private BankStatementCSVParser bankStatementCSVParser;
