@@ -312,8 +312,8 @@ public class App {
 	
 	private void  setCategoriesComboBox(List<BankTransaction> bankTransactions, JComboBox<String> jcCategory) {
 		bankTransactions.stream()
+				.distinct()
 				.map( v -> v.getDescription())
-				.collect(Collectors.toSet())
 				.forEach(v -> jcCategory.addItem(v));
 	}
 	

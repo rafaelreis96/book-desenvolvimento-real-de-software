@@ -7,7 +7,6 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import cap1.model.BankTransaction;
-import cap1.model.BankTransactionFilter;
 
 public class ExtractTableModel extends AbstractTableModel {
 	
